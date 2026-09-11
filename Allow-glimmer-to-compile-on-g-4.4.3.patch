@@ -1,0 +1,626 @@
+diff --git a/src/Common/delcher.cc b/src/Common/delcher.cc
+index 53651ca..1f5f64c 100644
+--- a/src/Common/delcher.cc
++++ b/src/Common/delcher.cc
+@@ -8,6 +8,7 @@
+ 
+ 
+ #include  "delcher.hh"
++#include <cstring>
+ 
+ const int  COMMATIZE_BUFF_LEN = 50;
+   // Length of buffer for creating string with commas
+@@ -280,7 +281,7 @@ void  Reverse_String
+   {
+    int  i, j, n;
+ 
+-   n = strlen (s);
++   n = std::strlen (s);
+    for  (i = 0, j = n - 1;  i < j;  i ++, j --)
+      {
+       char  ch;
+diff --git a/src/Common/fasta.cc b/src/Common/fasta.cc
+index 314eb8d..d71d09d 100644
+--- a/src/Common/fasta.cc
++++ b/src/Common/fasta.cc
+@@ -8,7 +8,7 @@
+ 
+ 
+ #include  "fasta.hh"
+-
++#include <cstring>
+ 
+ 
+ void  Fasta_Print
+@@ -93,7 +93,7 @@ void  Fasta_Print_Skip
+ 
+    while  (* s != '\0')
+      {
+-      if  (strchr (skip, * s) == NULL)
++      if  (std::strchr (skip, * s) == NULL)
+           {
+            if  (ct == fasta_width)
+                {
+diff --git a/src/Common/gene.cc b/src/Common/gene.cc
+index f1bc984..297e74a 100644
+--- a/src/Common/gene.cc
++++ b/src/Common/gene.cc
+@@ -9,6 +9,7 @@
+ 
+ #include "delcher.hh"
+ #include "gene.hh"
++#include <cstring>
+ 
+ 
+ static const char  COMPLEMENT_TABLE []
+@@ -260,7 +261,7 @@ void  PWM_t :: Print
+ //  Print the contents of this PWM to  fp .
+ 
+   {
+-   char  * tag = "acgt";
++   char tag[] = "acgt";
+    int  width;
+    int  i, j;
+ 
+@@ -443,9 +444,9 @@ int  Char_Sub
+ //  Return a subscript corresponding to character  ch .
+ 
+   {
+-   char  * p;
++   const char  * p;
+ 
+-   p = strchr (CONVERSION_STRING, tolower (ch));
++   p = std::strchr (CONVERSION_STRING, tolower (ch));
+    if  (p == NULL)
+        return  4;
+ 
+diff --git a/src/Glimmer/anomaly.cc b/src/Glimmer/anomaly.cc
+index 1cff21f..9bf57a1 100644
+--- a/src/Glimmer/anomaly.cc
++++ b/src/Glimmer/anomaly.cc
+@@ -11,7 +11,7 @@
+ 
+ 
+ #include  "anomaly.hh"
+-
++#include <cstring>
+ 
+ // Global variables
+ 
+@@ -79,7 +79,7 @@ int  main
+               continue;
+              }
+ 
+-         if  (Start < End && End - Start <= Len / 2 || Start - End > Len / 2)
++         if  ( (Start < End && End - Start <= Len / 2 ) || Start - End > Len / 2)
+              {
+               Direction = +1;
+               Gene_Len = 1 + End - Start;
+@@ -261,7 +261,7 @@ static bool  Is_Start_Codon
+    int  i;
+ 
+    for  (i = 0;  i < Num_Start_Codons;  i ++)
+-     if  (strncmp (p, Start_Codon [i], 3) == 0)
++     if  (std::strncmp (p, Start_Codon [i], 3) == 0)
+          return  true;
+ 
+    return  false;
+@@ -279,7 +279,7 @@ static bool  Is_Stop_Codon
+    int  i;
+ 
+    for  (i = 0;  i < Num_Stop_Codons;  i ++)
+-     if  (strncmp (p, Stop_Codon [i], 3) == 0)
++     if  (std::strncmp (p, Stop_Codon [i], 3) == 0)
+          return  true;
+ 
+    return  false;
+@@ -305,7 +305,7 @@ static void  Parse_Command_Line
+        {
+         case  'A' :
+           Start_Codon . clear ();
+-          for  (p = strtok (optarg, ",");  p != NULL;  p = strtok (NULL, ","))
++          for  (p = std::strtok (optarg, ",");  p != NULL;  p = std::strtok (NULL, ","))
+             {
+              q = strdup (p);
+              Make_Lower_Case (q);
+@@ -323,7 +323,7 @@ static void  Parse_Command_Line
+ 
+         case  'Z' :
+           Stop_Codon . clear ();
+-          for  (p = strtok (optarg, ",");  p != NULL;  p = strtok (NULL, ","))
++          for  (p = std::strtok (optarg, ",");  p != NULL;  p = std::strtok (NULL, ","))
+             {
+              q = strdup (p);
+              Make_Lower_Case (q);
+diff --git a/src/Glimmer/glimmer3.cc b/src/Glimmer/glimmer3.cc
+index cbd0f4c..db1f839 100644
+--- a/src/Glimmer/glimmer3.cc
++++ b/src/Glimmer/glimmer3.cc
+@@ -15,7 +15,7 @@
+ 
+ 
+ #include  "glimmer3.hh"
+-
++#include <cstring>
+ 
+ static int  For_Edwin = 0;
+ 
+@@ -1683,7 +1683,7 @@ static void  Parse_Command_Line
+           Command_Line . append (" -A ");
+           Command_Line . append (optarg);
+           Start_Codon . clear ();
+-          for  (p = strtok (optarg, ",");  p != NULL;  p = strtok (NULL, ","))
++          for  (p = std::strtok (optarg, ",");  p != NULL;  p = std::strtok (NULL, ","))
+             {
+              q = strdup (p);
+              Make_Lower_Case (q);
+@@ -1719,7 +1719,7 @@ static void  Parse_Command_Line
+         case  'E' :
+           Command_Line . append (" -E ");
+           Command_Line . append (optarg);
+-          if  (strcmp (optarg, "#") != 0)
++          if  (std::strcmp (optarg, "#") != 0)
+               Read_Entropy_Profiles (optarg, errflg);
+           Use_Entropy_Profiles = true;
+           break;
+@@ -1784,7 +1784,7 @@ static void  Parse_Command_Line
+           Command_Line . append (" -P ");
+           Command_Line . append (optarg);
+           Start_Prob . clear ();
+-          for  (p = strtok (optarg, ",");  p != NULL;  p = strtok (NULL, ","))
++          for  (p = std::strtok (optarg, ",");  p != NULL;  p = std::strtok (NULL, ","))
+             Start_Prob . push_back (strtod (p, NULL));
+           break;
+ 
+@@ -1834,7 +1834,7 @@ static void  Parse_Command_Line
+           Command_Line . append (" -Z ");
+           Command_Line . append (optarg);
+           Stop_Codon . clear ();
+-          for  (p = strtok (optarg, ",");  p != NULL;  p = strtok (NULL, ","))
++          for  (p = std::strtok (optarg, ",");  p != NULL;  p = std::strtok (NULL, ","))
+             {
+              q = strdup (p);
+              Make_Lower_Case (q);
+@@ -3009,7 +3009,7 @@ static void  Score_Orfs
+            gene_list . push_back (gene);
+           }
+         else
+-          strcpy (tag, "    ");
++          std::strcpy (tag, "    ");
+ 
+       if  (Genome_Is_Circular)
+           {
+@@ -3077,12 +3077,12 @@ static void  Score_Separate_Input
+ 
+    len = seq . length () - 3;  // remove stop codon
+    Reverse_Transfer (buff, seq, len - 1, len);
+-   strcpy (line, hdr . c_str ());
+-   p = strtok (line, " \t\n");
++   std::strcpy (line, hdr . c_str ());
++   p = std::strtok (line, " \t\n");
+    if  (p == NULL)
+        sprintf (tag, "Seq%04d", seq_num);
+      else
+-       strcpy (tag, p);
++       std::strcpy (tag, p);
+ 
+    if  (Use_Independent_Score)
+        af . resize (7);
+diff --git a/src/Glimmer/long-orfs.cc b/src/Glimmer/long-orfs.cc
+index bba834f..e79a203 100644
+--- a/src/Glimmer/long-orfs.cc
++++ b/src/Glimmer/long-orfs.cc
+@@ -14,7 +14,7 @@
+ 
+ 
+ #include  "long-orfs.hh"
+-
++#include <cstring>
+ 
+ 
+ // External variables
+@@ -118,7 +118,7 @@ int  main
+ 
+       Set_Start_And_Stop_Codons ();
+ 
+-      if  (strcmp (Output_Filename, "-") == 0)
++      if  (std::strcmp (Output_Filename, "-") == 0)
+           output_fp = stdout;
+         else
+           output_fp = File_Open (Output_Filename, "w", __FILE__, __LINE__);
+@@ -1170,7 +1170,7 @@ static void  Parse_Command_Line
+        {
+         case  'A' :
+           Start_Codon . clear ();
+-          for  (p = strtok (optarg, ",");  p != NULL;  p = strtok (NULL, ","))
++          for  (p = std::strtok (optarg, ",");  p != NULL;  p = std::strtok (NULL, ","))
+             {
+              q = strdup (p);
+              Make_Lower_Case (q);
+@@ -1242,7 +1242,7 @@ static void  Parse_Command_Line
+ 
+         case  'Z' :
+           Stop_Codon . clear ();
+-          for  (p = strtok (optarg, ",");  p != NULL;  p = strtok (NULL, ","))
++          for  (p = std::strtok (optarg, ",");  p != NULL;  p = std::strtok (NULL, ","))
+             {
+              q = strdup (p);
+              Make_Lower_Case (q);
+diff --git a/src/ICM/build-fixed.cc b/src/ICM/build-fixed.cc
+index 336d10d..b962784 100644
+--- a/src/ICM/build-fixed.cc
++++ b/src/ICM/build-fixed.cc
+@@ -11,7 +11,7 @@
+ 
+ 
+ #include  "build-fixed.hh"
+-
++#include <cstring>
+ 
+ static FILE  * Index_File_fp = NULL;
+   // File containing a list of subscripts of strings to train model
+@@ -73,12 +73,12 @@ int  main
+         string_ct = Training_Data . size ();
+        }
+ 
+-   Model_Len = strlen (Training_Data [0]);
++   Model_Len = std::strlen (Training_Data [0]);
+    for  (i = 1;  i < string_ct;  i ++)
+-     if  (int (strlen (Training_Data [i])) != Model_Len)
++     if  (int (std::strlen (Training_Data [i])) != Model_Len)
+          {
+           fprintf (stderr, "ERROR:  String #%d has length = %d\n",
+-                   i, int (strlen (Training_Data [i])));
++                   i, int (std::strlen (Training_Data [i])));
+           fprintf (stderr, "        different from string #0 length = %d\n",
+                    Model_Len);
+           exit (EXIT_FAILURE);
+@@ -151,7 +151,7 @@ static void  Parse_Command_Line
+            vector <int>  perm;
+            int  i, j, n;
+ 
+-           for  (p = strtok (optarg, ", ");  p != NULL;  p = strtok (NULL, ", "))
++           for  (p = std::strtok (optarg, ", ");  p != NULL;  p = std::strtok (NULL, ", "))
+              perm . push_back (atoi (p));
+            n = perm . size ();
+            Permutation = (int *) Safe_calloc (n, sizeof (int), __FILE__,
+diff --git a/src/ICM/build-icm.cc b/src/ICM/build-icm.cc
+index 1cf5635..3c6bc29 100644
+--- a/src/ICM/build-icm.cc
++++ b/src/ICM/build-icm.cc
+@@ -12,6 +12,7 @@
+ 
+ 
+ #include  "build-icm.hh"
++#include <cstring>
+ 
+ 
+ static int  Genbank_Xlate_Code = 0;
+@@ -56,7 +57,7 @@ int  main
+ 
+    Parse_Command_Line (argc, argv);
+ 
+-   if  (strcmp (Output_Filename, "-") == 0)
++   if  (std::strcmp (Output_Filename, "-") == 0)
+        output_fp = stdout;
+    else if  (Print_Binary)
+        output_fp = File_Open (Output_Filename, "wb");
+@@ -90,11 +91,11 @@ int  main
+ 
+            // Assuming data has been converted to lower-case if needed
+ 
+-           len = strlen (Training_Data [i]);
++           len = std::strlen (Training_Data [i]);
+ 
+            for  (j = 0;  j < len - 2 && ! skip;  j += 3)
+              for  (s = 0;  s < num_stops && ! skip;  s ++)
+-               skip = (strncmp (Training_Data [i] + j, Stop_Codon [s], 3) == 0);
++               skip = (std::strncmp (Training_Data [i] + j, Stop_Codon [s], 3) == 0);
+ 
+            if  (skip)
+                ct ++;
+@@ -230,7 +231,7 @@ static void  Parse_Command_Line
+ 
+         case  'Z' :
+           Stop_Codon . clear ();
+-          for  (p = strtok (optarg, ",");  p != NULL;  p = strtok (NULL, ","))
++          for  (p = std::strtok (optarg, ",");  p != NULL;  p = std::strtok (NULL, ","))
+             {
+              q = strdup (p);
+              Make_Lower_Case (q);
+diff --git a/src/ICM/icm.cc b/src/ICM/icm.cc
+index d675c31..a017d81 100644
+--- a/src/ICM/icm.cc
++++ b/src/ICM/icm.cc
+@@ -14,8 +14,7 @@
+ 
+ 
+ #include  "icm.hh"
+-
+-using namespace std;
++#include <cstring>
+ 
+ extern int  Verbose;
+ 
+@@ -522,7 +521,7 @@ void  ICM_t :: Full_Window_Distrib
+         pos = score [frame] [num_node] . mut_info_pos;
+        }
+ 
+-   memcpy (dist, score [frame] [num_node] . prob, ALPHABET_SIZE * sizeof (float));
++   std::memcpy (dist, score [frame] [num_node] . prob, ALPHABET_SIZE * sizeof (float));
+ 
+    return;
+   }
+@@ -958,7 +957,7 @@ void  ICM_t :: Write_Header
+                  "  periodicity = %d  nodes = %d\n", 
+                  ICM_VERSION_ID / 100.0, model_len, model_depth,
+                  periodicity, num_nodes);
+-        assert (int (strlen (line)) < ID_STRING_LEN);
++        assert (int (std::strlen (line)) < ID_STRING_LEN);
+         fwrite (line, sizeof (char), ID_STRING_LEN, fp);
+ 
+         param [0] = ICM_VERSION_ID;
+@@ -1172,7 +1171,7 @@ void  ICM_Training_t :: Count_Char_Pairs_Restricted
+    int  i, j;
+ 
+    start = 0;
+-   end = int (strlen (string));
++   end = int (std::strlen (string));
+    frame = model_len % periodicity;
+ 
+    for  (stop = model_len - 1;  stop < end;  start ++, stop ++)
+@@ -1548,7 +1547,7 @@ double  Fixed_Length_ICM_t :: Score_Window
+         buff_len = length;
+        }
+ 
+-   strncpy (buff, w, length);
++   std::strncpy (buff, w, length);
+    if  (permutation != NULL)
+        Permute_String (buff, permutation, length);
+ 
+@@ -1596,7 +1595,7 @@ double  Fixed_Length_ICM_t :: subrange_score
+         buff_len = length;
+        }
+ 
+-   strncpy (buff, w, length);
++   std::strncpy (buff, w, length);
+    if  (permutation != NULL)
+        Permute_String (buff, permutation, length);
+ 
+@@ -1711,7 +1710,7 @@ void  Fixed_Length_ICM_Training_t :: Train_Model
+      {
+       for  (j = 0;  j < string_ct;  j ++)
+         {
+-         strncpy (sub_data [j], data [j], i);
++         std::strncpy (sub_data [j], data [j], i);
+          sub_data [j] [i] = '\0';
+         }
+ 
+@@ -1772,11 +1771,11 @@ void  Fixed_Length_ICM_Training_t :: Write_Header
+                sprintf (perm, "  %d", permutation == NULL ? i : permutation [i]);
+              else
+                sprintf (perm, ",%d", permutation == NULL ? i : permutation [i]);
+-           strcat (line, perm);
++           std::strcat (line, perm);
+           }
+-        strcat (line, "\n");
++        std::strcat (line, "\n");
+ 
+-        assert (int (strlen (line)) < ID_STRING_LEN);
++        assert (int (std::strlen (line)) < ID_STRING_LEN);
+         fwrite (line, sizeof (char), ID_STRING_LEN, fp);
+ 
+         param [0] = ICM_VERSION_ID;
+@@ -1822,7 +1821,7 @@ void  Count_Char_Pairs
+    int  start, stop, end, i, j, last_char_sub;
+ 
+    start = 0;
+-   end = int (strlen (string));
++   end = int (std::strlen (string));
+ 
+    for  (stop = w - 1;  stop < end;  start += period, stop += period)
+      {
+@@ -1853,7 +1852,7 @@ void  Count_Single_Chars
+   {
+    int  pos, end, last_char_sub;
+ 
+-   end = int (strlen (string));
++   end = int (std::strlen (string));
+ 
+    for  (pos = w - 1;  pos < end;  pos += period)
+      {
+@@ -1938,7 +1937,7 @@ void  Permute_Data
+    if  (n == 0)
+        return;
+ 
+-   len = strlen (data [0]);
++   len = std::strlen (data [0]);
+ 
+    for  (i = 0;  i < n;  i ++)
+      Permute_String (data [i], perm, len);
+@@ -1967,7 +1966,7 @@ void  Permute_String
+ 
+    for  (i = 0;  i < n;  i ++)
+      buff [i] = s [perm [i]];
+-   strncpy (s, buff, n);
++   std::strncpy (s, buff, n);
+ 
+    return;
+   }
+@@ -1981,9 +1980,9 @@ int  Subscript
+ //  model) for character  ch .
+ 
+   {
+-   char  * p;
++   const char  * p;
+ 
+-   p = strchr (ALPHA_STRING, tolower (Filter (ch)));
++   p = std::strchr (ALPHA_STRING, tolower (Filter (ch)));
+    if  (p == NULL)
+        {
+         fprintf (stderr, "ERROR:  Bad character %c in subscript conversion",
+diff --git a/src/ICM/score-fixed.cc b/src/ICM/score-fixed.cc
+index 8b1f230..c0601e2 100644
+--- a/src/ICM/score-fixed.cc
++++ b/src/ICM/score-fixed.cc
+@@ -7,7 +7,7 @@
+ 
+ 
+ #include  "score-fixed.hh"
+-
++#include <cstring>
+ 
+ static char  * Pos_Model_Path;
+   // Name of file containing the positive model
+@@ -67,13 +67,13 @@ int  main
+       int  len;
+ 
+       string_num ++;
+-      len = strlen (string);
++      len = std::strlen (string);
+ 
+       pos_score = pos_model . score (string);
+       if  (Use_Null_Neg_Model)
+           neg_score = 0.0;
+       else if  (Use_Neg_ICM_Model)
+-          neg_score = neg_icm_model . Score_String (string, strlen (string), 1);
++          neg_score = neg_icm_model . Score_String (string, std::strlen (string), 1);
+         else
+           neg_score = neg_fixed_model . score (string);
+ 
+diff --git a/src/Util/entropy-score.cc b/src/Util/entropy-score.cc
+index 835e1f8..49ea739 100644
+--- a/src/Util/entropy-score.cc
++++ b/src/Util/entropy-score.cc
+@@ -12,7 +12,7 @@
+ 
+ 
+ #include  "entropy-score.hh"
+-
++#include <cstring>
+ 
+ // External variables
+ 
+@@ -73,7 +73,7 @@ int  main
+ 
+    seq_len = sequence . length ();
+ 
+-   if  (strcmp (Coord_Info, "-") == 0)
++   if  (std::strcmp (Coord_Info, "-") == 0)
+        fp = stdin;
+      else
+        fp = File_Open (Coord_Info, "r");
+@@ -153,7 +153,7 @@ int  main
+                 extract_len);
+           }
+ 
+-      n = strlen (line);
++      n = std::strlen (line);
+       if  (line [n - 1] == '\n');
+           line [n - 1] = '\0';
+       printf ("%s \t%5.3f\n", line, Entropy_Distance_Ratio (buff));
+diff --git a/src/Util/extract.cc b/src/Util/extract.cc
+index 46a9cd1..061d41f 100644
+--- a/src/Util/extract.cc
++++ b/src/Util/extract.cc
+@@ -12,7 +12,7 @@
+ 
+ 
+ #include  "extract.hh"
+-
++#include <cstring>
+ 
+ // External variables
+ 
+@@ -71,7 +71,7 @@ int  main
+ 
+    seq_len = sequence . length ();
+ 
+-   if  (strcmp (Coord_Info, "-") == 0)
++   if  (std::strcmp (Coord_Info, "-") == 0)
+        fp = stdin;
+      else
+        fp = File_Open (Coord_Info, "r");
+diff --git a/src/Util/multi-extract.cc b/src/Util/multi-extract.cc
+index 2625688..aa04bda 100644
+--- a/src/Util/multi-extract.cc
++++ b/src/Util/multi-extract.cc
+@@ -12,9 +12,9 @@
+ 
+ 
+ 
++#include <cstring>
+ #include  "multi-extract.hh"
+ 
+-
+ // External variables
+ 
+ extern int  Verbose;
+@@ -63,7 +63,7 @@ int  main
+    Parse_Command_Line (argc, argv);
+ 
+    // Read and store the coordinate information
+-   if  (strcmp (Coord_Info, "-") == 0)
++   if  (std::strcmp (Coord_Info, "-") == 0)
+        fp = stdin;
+      else
+        fp = File_Open (Coord_Info, "r");
+@@ -194,17 +194,17 @@ static void  Find_Matches
+    int  i, n;
+ 
+    n = list . size ();
+-   for  (i = 0;  i < n && strcmp (p, list [i] . tag) > 0;  i ++)
++   for  (i = 0;  i < n && std::strcmp (p, list [i] . tag) > 0;  i ++)
+      ;
+ 
+    sub = i;
+    num = 0;
+ 
+-   if  (i == n || strcmp (p, list [i] . tag) != 0)
++   if  (i == n || std::strcmp (p, list [i] . tag) != 0)
+        return;
+ 
+ 
+-   for  ( ;  i < n && strcmp (p, list [i] . tag) == 0;  i ++)
++   for  ( ;  i < n && std::strcmp (p, list [i] . tag) == 0;  i ++)
+      num ++;
+ 
+    return;
+diff --git a/src/Util/multi-extract.hh b/src/Util/multi-extract.hh
+index 2209ffb..688ae59 100644
+--- a/src/Util/multi-extract.hh
++++ b/src/Util/multi-extract.hh
+@@ -28,7 +28,7 @@ struct  Coord_Info_t
+ static bool  By_Tag
+     (Coord_Info_t const & a, Coord_Info_t const & b)
+   {
+-   return  (strcmp (a . tag, b . tag) < 0);
++   return  (std::strcmp (a . tag, b . tag) < 0);
+   }
+ 
+ 
+diff --git a/src/Util/start-codon-distrib.cc b/src/Util/start-codon-distrib.cc
+index 58877ac..6415fce 100644
+--- a/src/Util/start-codon-distrib.cc
++++ b/src/Util/start-codon-distrib.cc
+@@ -15,6 +15,7 @@
+ //  of the gene.
+ 
+ 
++#include <cstring>
+ #include  "start-codon-distrib.hh"
+ 
+ 
+diff --git a/src/Util/uncovered.cc b/src/Util/uncovered.cc
+index 9970ccc..884bbbb 100644
+--- a/src/Util/uncovered.cc
++++ b/src/Util/uncovered.cc
+@@ -11,7 +11,7 @@
+ //  Output is a multifasta file sent to stdout.
+ 
+ 
+-
++#include <cstring>
+ #include  "uncovered.hh"
+ 
+ 
